@@ -126,7 +126,7 @@
     <record id="action_fleet_driver_daily_log" model="ir.actions.act_window">
         <field name="name">Daily Logs</field>
         <field name="res_model">fleet.driver.daily.log</field>
-        <field name="view_mode">kanban,tree,calendar,pivot,form</field>
+        <field name="view_mode">kanban,list,calendar,pivot,form</field>
     </record>
 
 </odoo>

@@ -81,7 +81,7 @@
     <record id="action_fleet_weekly_liquidation" model="ir.actions.act_window">
         <field name="name">Weekly Liquidations</field>
         <field name="res_model">fleet.weekly.liquidation</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
 </odoo>
