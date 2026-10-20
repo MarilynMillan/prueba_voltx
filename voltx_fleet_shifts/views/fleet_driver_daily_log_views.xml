@@ -55,7 +55,7 @@
         <field name="name">fleet.driver.daily.log.tree</field>
         <field name="model">fleet.driver.daily.log</field>
         <field name="arch" type="xml">
-            <tree string="Daily Logs" decoration-success="worked == True" decoration-danger="worked == False and state == 'done'">
+            <list string="Daily Logs" decoration-success="worked == True" decoration-danger="worked == False and state == 'done'">
                 <field name="name"/>
                 <field name="vehicle_id"/>
                 <field name="driver_id"/>
@@ -64,7 +64,7 @@
                 <field name="hours_worked"/>
                 <field name="worked"/>
                 <field name="state"/>
-            </tree>
+            </list>
         </field>
     </record>
 

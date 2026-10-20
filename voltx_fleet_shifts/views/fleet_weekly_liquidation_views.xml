@@ -44,14 +44,14 @@
                     <notebook>
                         <page string="Daily Logs">
                             <field name="daily_log_ids">
-                                <tree>
+                                <list>
                                     <field name="name"/>
                                     <field name="check_in"/>
                                     <field name="check_out"/>
                                     <field name="hours_worked"/>
                                     <field name="worked" widget="boolean_toggle"/>
                                     <field name="state"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                     </notebook>
@@ -65,7 +65,7 @@
         <field name="name">fleet.weekly.liquidation.tree</field>
         <field name="model">fleet.weekly.liquidation</field>
         <field name="arch" type="xml">
-            <tree string="Weekly Liquidations">
+            <list string="Weekly Liquidations">
                 <field name="name"/>
                 <field name="contract_id"/>
                 <field name="driver_id"/>
@@ -73,7 +73,7 @@
                 <field name="days_worked"/>
                 <field name="amount_total"/>
                 <field name="state"/>
-            </tree>
+            </list>
         </field>
     </record>
 

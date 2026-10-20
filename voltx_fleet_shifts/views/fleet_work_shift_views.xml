@@ -26,10 +26,10 @@
         <field name="name">fleet.work.shift.tree</field>
         <field name="model">fleet.work.shift</field>
         <field name="arch" type="xml">
-            <tree string="Work Shifts">
+            <list string="Work Shifts">
                 <field name="name"/>
                 <field name="hours_per_day"/>
-            </tree>
+            </list>
         </field>
     </record>
 
