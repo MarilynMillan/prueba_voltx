@@ -1,5 +1,6 @@
 from odoo import models, fields, api
 from datetime import datetime
+import math
 
 class FleetDriverDailyLog(models.Model):
     _name = 'fleet.driver.daily.log'
@@ -26,6 +27,18 @@ class FleetDriverDailyLog(models.Model):
     ], default='draft', string='Status')
 
     liquidation_id = fields.Many2one('fleet.weekly.liquidation', string='Weekly Liquidation')
+
+    @api.onchange('vehicle_id', 'driver_id')
+    def _onchange_vehicle_driver(self):
+        if self.vehicle_id and self.driver_id:
+            contract = self.env['fleet.vehicle.log.contract'].search([
+                ('vehicle_id', '=', self.vehicle_id.id),
+                ('purchaser_id', '=', self.driver_id.id),
+                ('state', 'in', ['open', 'futur'])
+            ], limit=1)
+            if contract:
+                self.contract_id = contract.id
+                self.shift_id = contract.shift_id.id
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -58,8 +71,38 @@ class FleetDriverDailyLog(models.Model):
         self.ensure_one()
         self.check_in = fields.Datetime.now()
         self.state = 'active'
-        # Assign driver to vehicle, natively Odoo tracks this in fleet.vehicle.assignation.log
+
+        # Natively Odoo tracks this in fleet.vehicle.assignation.log
         self.vehicle_id.driver_id = self.driver_id
+
+        # Determine the next driver based on assigned drivers and shifts
+        if self.vehicle_id.driver_ids:
+            next_driver = False
+            next_shift_start = 24.0
+            current_time_float = self.check_in.hour + (self.check_in.minute / 60.0)
+
+            for drv in self.vehicle_id.driver_ids:
+                if drv.id != self.driver_id.id:
+                    # Find contract for this other driver
+                    other_contract = self.env['fleet.vehicle.log.contract'].search([
+                        ('vehicle_id', '=', self.vehicle_id.id),
+                        ('purchaser_id', '=', drv.id),
+                        ('state', 'in', ['open', 'futur'])
+                    ], limit=1)
+                    if other_contract and other_contract.shift_id:
+                        shift_start = other_contract.shift_id.start_time
+                        # Simple logic: the next shift is the one that starts after the current time
+                        # or wraps around to the next day
+                        time_diff = shift_start - current_time_float
+                        if time_diff < 0:
+                            time_diff += 24.0 # Wraps to next day
+
+                        if time_diff < next_shift_start:
+                            next_shift_start = time_diff
+                            next_driver = drv
+
+            if next_driver:
+                self.vehicle_id.future_driver_id = next_driver
 
     def action_end_shift(self):
         self.ensure_one()
